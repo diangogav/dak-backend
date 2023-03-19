@@ -1,9 +1,10 @@
 import express, { Request, Response } from 'express'
+import { config } from './config'
 import { Logger } from './modules/shared/logger/domain'
 
 export class ExpressServer {
   private readonly express: express.Express
-  private readonly port = 3000
+  private readonly port = config.PORT
   private readonly logger: Logger
 
   constructor(logger: Logger) {
