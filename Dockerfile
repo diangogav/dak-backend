@@ -21,7 +21,7 @@ WORKDIR /app
 COPY --from=builder /app/built/ ./src/
 COPY --from=builder /app/node_modules ./node_modules
 
-EXPOSE 3000
+EXPOSE 3977
 
 USER node
 
