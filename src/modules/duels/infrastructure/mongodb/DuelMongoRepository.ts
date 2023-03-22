@@ -64,4 +64,24 @@ export class DuelMongoRepository extends BaseMongooseRepository<Duel> implements
 
     return clanStats
   }
+
+  async statisticsAgainstOpposingClans(clanName: string): Promise<unknown> {
+    const stats = await DuelModel.aggregate([
+      {
+        $match: { playerClan: clanName },
+      },
+      {
+        $group: {
+          _id: "$opponentClan",
+          matchCount: { $sum: 1 },
+          matchWins: { $sum: { $cond: [{ $eq: ["$playerWon", true] }, 1, 0] } },
+          matchLosses: {
+            $sum: { $cond: [{ $eq: ["$playerWon", false] }, 1, 0] },
+          },
+        },
+      },
+    ]);
+
+    return stats;
+  }
 }

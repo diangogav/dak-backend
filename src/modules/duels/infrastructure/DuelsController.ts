@@ -4,6 +4,7 @@ import { DuelCreatorDto } from "../domain/DuelCreatorDto";
 import { DuelMongoRepository } from './mongodb/DuelMongoRepository';
 import { DuelStatsByClanGetter } from '../application/DuelStatsByClanGetter';
 import { ClanDuelStatistics } from "../domain/ClanDuelStatistics";
+import { StatisticsAgainstOpposingClans } from "../application/StatisticsAgainstOpposingClans";
 
 @Route("/v1/duels")
 export class DuelsController extends Controller {
@@ -20,6 +21,18 @@ export class DuelsController extends Controller {
       new DuelMongoRepository()
     );
     const stats = await clanStatsGetter.run(eventId);
-    return stats
+    return stats;
+  }
+
+  @Get("/event/{eventId}/clan/{clanName}/stats/against-opposing-clans")
+  async statisticsAgainstOpposingClans(
+    @Path() eventId: string,
+    @Path() clanName: string
+  ) {
+    const clanStatsGetter = new StatisticsAgainstOpposingClans(
+      new DuelMongoRepository()
+    );
+    const stats = await clanStatsGetter.run(clanName);
+    return stats;
   }
 }
