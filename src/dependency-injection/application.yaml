@@ -1,0 +1,12 @@
+services:
+  Shared.EventBus:
+    class: ../modules/shared/event-bus/infrastructure/InMemoryAsyncEventBus
+
+  Domain.PlayerDuelStatistics.Repository:
+    class: ../modules/duels/infrastructure/mongodb/PlayerDuelStatisticsMongoRepository
+
+  Application.Duels.DuelCreatedDomainEvent:
+    class: ../modules/duels/application/StatsUpdaterOnDuelCreated
+    arguments: ['@Domain.PlayerDuelStatistics.Repository']
+    tags:
+      - { name: 'domainEventSubscriber' }

@@ -1,5 +1,11 @@
+import 'express-async-errors'
 import express, { Request, Response } from 'express'
+import { Definition, YamlFileLoader } from 'node-dependency-injection'
 import { config } from './config'
+import container from './dependency-injection'
+import { DomainEvent } from './modules/shared/event-bus/domain/DomainEvent'
+import { DomainEventSubscriber } from './modules/shared/event-bus/domain/DomainEventSubscriber'
+import { EventBus } from './modules/shared/event-bus/domain/EventBus'
 import { Logger } from './modules/shared/logger/domain'
 import { RegisterRoutes } from './routes/routes'
 
@@ -27,4 +33,16 @@ export class ExpressServer {
       })
     })
   }
+
+  async registerSubscribers() {
+    const eventBus = container.get('Shared.EventBus') as EventBus
+    const subscriberDefinitions = container.findTaggedServiceIds('domainEventSubscriber') as Map<string, Definition>
+    const subscribers: Array<DomainEventSubscriber<DomainEvent>> = []
+    subscriberDefinitions.forEach((_value: unknown, key: string) => subscribers.push(container.get(key)))
+    eventBus.addSubscribers(subscribers)
+  }
+}
+
+function delay(ms: number) {
+  return new Promise( resolve => setTimeout(resolve, ms) );
 }
