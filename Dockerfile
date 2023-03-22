@@ -20,6 +20,7 @@ WORKDIR /app
 
 COPY --from=builder /app/built/ ./src/
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/src/dependency-injection/*.yaml ./src/dependency-injection/
 
 EXPOSE 3977
 
